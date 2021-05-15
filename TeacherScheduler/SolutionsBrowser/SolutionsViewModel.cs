@@ -52,6 +52,7 @@ namespace TeacherScheduler
             {
                 return solutionDisplayedIdx;
             }
+
             set
             {                
                 solutionDisplayedIdx = value;
@@ -70,6 +71,7 @@ namespace TeacherScheduler
             {
                 return solutionDisplayed;
             }
+            
             set
             {
                 if (solutionDisplayed != value)
@@ -86,6 +88,7 @@ namespace TeacherScheduler
             {
                 return solutionsSearchProgress;
             }
+            
             set
             {
                 if (solutionsSearchProgress != value) {
@@ -101,6 +104,7 @@ namespace TeacherScheduler
             {
                 return solutions;
             }
+            
             set
             {
                 if (solutions != value)
@@ -187,31 +191,30 @@ namespace TeacherScheduler
 #if DEBUG
             logger.write();
 #endif
-            if (!wasCanceled) { 
-                SolutionsSearchProgress = 100;
+            if (!wasCanceled)
+                SolutionsSearchProgress = 100;                            
 
-                List<Solution> solutionsBuffer = new List<Solution>(solutionsMatricesAsInt.Count);
-                foreach (int[,] solutionMatrixAsInt in solutionsMatricesAsInt)
+            List<Solution> solutionsBuffer = new List<Solution>(solutionsMatricesAsInt.Count);
+            foreach (int[,] solutionMatrixAsInt in solutionsMatricesAsInt)
+            {
+                List<Solution.Placement> placements = new List<Solution.Placement>();
+                for (int hourIdx = 0; hourIdx < solutionMatrixAsInt.GetLength(0); hourIdx++)
                 {
-                    List<Solution.Placement> placements = new List<Solution.Placement>();
-                    for (int hourIdx = 0; hourIdx < solutionMatrixAsInt.GetLength(0); hourIdx++)
+                    for (int dayIdx = 0; dayIdx < solutionMatrixAsInt.GetLength(1); dayIdx++)
                     {
-                        for (int dayIdx = 0; dayIdx < solutionMatrixAsInt.GetLength(1); dayIdx++)
-                        {
-                            if (solutionMatrixAsInt[hourIdx, dayIdx] > 0)
-                                placements.Add(new Solution.Placement { student = students[solutionMatrixAsInt[hourIdx, dayIdx] - 1], hourIdx = hourIdx, dayIdx = dayIdx });
-                        }
+                        if (solutionMatrixAsInt[hourIdx, dayIdx] > 0)
+                            placements.Add(new Solution.Placement { student = students[solutionMatrixAsInt[hourIdx, dayIdx] - 1], hourIdx = hourIdx, dayIdx = dayIdx });
                     }
+                }
 
-                    solutionsBuffer.Add(new Solution(placements));
-                }                
-                if (solutionsBuffer.Count > 0)                
-                    Solutions = new ObservableCollection<Solution>(solutionsBuffer);                                    
-                else
-                    Solutions = new ObservableCollection<Solution>();
+                solutionsBuffer.Add(new Solution(placements));
+            }                
+            if (solutionsBuffer.Count > 0)                
+                Solutions = new ObservableCollection<Solution>(solutionsBuffer);                                    
+            else
+                Solutions = new ObservableCollection<Solution>();
 
-                SolutionDisplayedIdx = 0;
-            }
+            SolutionDisplayedIdx = 0;            
         
             IsSolutionInProgress = false;
         }

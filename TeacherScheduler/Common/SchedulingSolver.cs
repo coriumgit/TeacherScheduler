@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
-using System.Threading;
 
 namespace TeacherScheduler
 {
@@ -25,11 +21,11 @@ namespace TeacherScheduler
             {
                 this.bkgWorker = bkgWorker;
                 int studentsNr = studentsData.Length;
-                progressionRatePerStudent = new double[studentsNr];          
-                
-                long studentsAssignmentsCombosNrOverall = 1;
+                progressionRatePerStudent = new double[studentsNr];
+
+                double studentsAssignmentsCombosNrOverall = 1;
                 foreach (StudentData studentData in studentsData)
-                    studentsAssignmentsCombosNrOverall *= studentData.assignmentsCombosNr;
+                    studentsAssignmentsCombosNrOverall = studentsAssignmentsCombosNrOverall * studentData.assignmentsCombosNr;
 
                 progressionRatePerStudent[studentsNr - 1] = 100.0 / studentsAssignmentsCombosNrOverall;
                 for (int studentIdx = studentsNr - 2; studentIdx >= 0; studentIdx--)
@@ -268,8 +264,7 @@ namespace TeacherScheduler
 
             if (studentsData[studentIdx].requiredHours == 0)
             {
-                progressReporter.addProgress(studentIdx, studentsData[studentIdx].assignmentsCombosNr);
-                doSolveRecurs(studentIdx + 1, scheduleCurr, schoolsConstraintsTable);
+                return doSolveRecurs(studentIdx + 1, scheduleCurr, schoolsConstraintsTable);
             }
             else
             {            
@@ -333,9 +328,9 @@ namespace TeacherScheduler
                     if (studentIdx == studentsNr - 1)
                         progressReporter.addProgress(studentIdx, 1);
                 }
-            }
 
-            return true;
+                return true;
+            }            
         }
 
         private bool isScheduleTimeValid(int studentIdx, ScheduleTime scheduleTime, int[,] scheduleCurr, SchoolsDistsConstraint[,] schoolsConstraintsTable)
