@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="TeacherScheduler.SchoolsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TeacherScheduler"
+             mc:Ignorable="d" 
+             Loaded="onLoad"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8*"/>
+        </Grid.ColumnDefinitions>
+        <Border Grid.Column="0">
+            <StackPanel Orientation="Vertical">
+                <Border>
+                    <Label HorizontalAlignment="Center" FontSize="14" FontWeight="Bold">Actions</Label>
+                </Border>
+                <Button Margin="0 2 0 2" Command="{Binding Path=AddSchoolCmd}">Add</Button>
+                <Button Command="{Binding Path=RemoveSchoolCmd}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=SelectedSchool}">Remove</Button>
+            </StackPanel>
+        </Border>
+        <Border Grid.Column="1">
+            <DockPanel x:Name="schoolsAvatarsPanel" PreviewMouseMove="onMouseMove" MouseLeftButtonUp="onMouseUp">
+                <ItemsControl x:Name="schoolsGroupsList" 
+                              ItemsSource="{Binding Path=SchoolsSets}" 
+                              DockPanel.Dock="Left"          
+                              Height="{Binding ElementName=schoolsAvatarsPanel, Path=ActualHeight}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding}"
+                                          Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type DockPanel}}, Path=ActualHeight}"                                                                                    
+                                          Background="#FFFFFF"
+                                          MouseLeftButtonDown="onMouseDown"
+                                          MouseEnter="onMouseEnterSchoolsGrp"                                           
+                                          MouseLeave="onMouseLeaveSchoolsGrp">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Margin="5 0 5 0"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <!-- wrapper to set the control invisible without having the adorner of the wrapped lmnt to go invisible -->
+                                        <Border BorderThickness="0" Margin="0">
+                                            <Border Width="80" Height="40" Margin="0 2 0 2" Background="LightBlue" Tag="SchoolWrapper">
+                                                <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Path=Name}" FontSize="18" BorderThickness="0" Background="LightBlue"/>
+                                            </Border>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Rectangle DockPanel.Dock="Right" x:Name="createNewGrpArea" Fill="White"
+                        MouseEnter="onMouseEnterNewGrpCreationArea"
+                        MouseLeave="onMouseLeaveNewGrpCreationArea"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

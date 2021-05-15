@@ -1,0 +1,100 @@
+﻿<Application x:Class="TeacherScheduler.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:local="clr-namespace:TeacherScheduler">
+    <Application.Resources>
+        <Style TargetType="Border">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#808080"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="local:InputBindingsManager.UpdateSourcePropertyOnEnterPress" Value="TextBox.Text"/>
+        </Style>        
+
+        <DataTemplate x:Key="ScheduleTable">
+            <Border>
+                <DockPanel LastChildFill="True">
+                    <Label DockPanel.Dock="Top" HorizontalAlignment="Center" FontSize="14" FontWeight="Bold">Available Hours</Label>
+                    <DataGrid x:Name="scheduleTable"
+                              ItemsSource="{Binding Path=Schedule}"
+                              HeadersVisibility="Column"
+                              AutoGenerateColumns="False"  
+                              IsReadOnly="True"
+                              SelectionMode="Single" SelectionUnit="Cell"                                                            
+                              CanUserSortColumns="False" CanUserResizeColumns="False" CanUserReorderColumns="False"
+                              CanUserResizeRows="False" CanUserAddRows="False">
+                        <DataGrid.Resources>
+                            <local:ItemIdxConverter x:Key="rowIdxConverter"/>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <EventSetter Event="Click" Handler="onScheduleTableColumnHeaderClicked"/>
+                            </Style>
+                            <Style x:Key="dataCell" TargetType="DataGridCell">
+                                <EventSetter Event="MouseDown" Handler="onScheduleTableCellMouseDownEnter"/>
+                                <!--<EventSetter Event="MouseEnter" Handler="onScheduleTableCellMouseDownEnter"/>-->
+                                <EventSetter Event="GotFocus" Handler="onScheduleTableCellMouseDownEnter"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Content.Text, Mode=TwoWay}" Value="True">
+                                        <DataTrigger.Setters>
+                                            <Setter Property="Foreground" Value="Lime"/>
+                                            <Setter Property="Background" Value="Lime"/>
+                                            <Setter Property="BorderBrush" Value="Lime"/>
+                                        </DataTrigger.Setters>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Content.Text, Mode=TwoWay}" Value="False">
+                                        <DataTrigger.Setters>
+                                            <Setter Property="Foreground" Value="Red"/>
+                                            <Setter Property="Background" Value="Red"/>
+                                            <Setter Property="BorderBrush" Value="Red"/>
+                                        </DataTrigger.Setters>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn IsReadOnly="True" Width="Auto" Header="Hour">
+                                <DataGridTextColumn.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <EventSetter Event="GotFocus" Handler="onScheduleTableHourClicked"/>
+                                        <Setter Property="BorderBrush" Value="WhiteSmoke"/>
+                                        <Setter Property="Background" Value="WhiteSmoke"/>
+                                    </Style>
+                                </DataGridTextColumn.CellStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextAlignment" Value="Center"/>
+                                        <Setter Property="Background" Value="WhiteSmoke"/>
+                                        <Setter Property="Text" Value="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={StaticResource rowIdxConverter}}">
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Width="2*" Header="Sunday" Binding="{Binding [0], NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CellStyle="{StaticResource dataCell}"/>
+                            <DataGridTextColumn Width="2*" Header="Monday" Binding="{Binding [1], NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CellStyle="{StaticResource dataCell}"/>
+                            <DataGridTextColumn Width="2*" Header="Tuesday" Binding="{Binding [2], NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CellStyle="{StaticResource dataCell}"/>
+                            <DataGridTextColumn Width="2*" Header="Wednesday" Binding="{Binding [3], NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CellStyle="{StaticResource dataCell}"/>
+                            <DataGridTextColumn Width="2*" Header="Thursday" Binding="{Binding [4], NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CellStyle="{StaticResource dataCell}"/>
+                            <DataGridTextColumn Width="2*" Header="Friday" Binding="{Binding [5], NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CellStyle="{StaticResource dataCell}"/>
+                            <DataGridTextColumn Width="2*" Header="Saturday" Binding="{Binding [6], NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CellStyle="{StaticResource dataCell}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </Border>
+        </DataTemplate>
+        <!-- 
+        <DataTemplate x:Key="ScheduleTableGridded">
+            <Border>
+                <DockPanel LastChildFill="True">
+                    <Label DockPanel.Dock="Top" HorizontalAlignment="Center" FontSize="14" FontWeight="Bold">Available Hours</Label>
+                    <UniformGrid>
+                        <UniformGrid.
+                    </UniformGrid>
+                </DockPanel>
+            </Border>
+        </DataTemplate>
+        -->
+    </Application.Resources>
+</Application>

@@ -1,0 +1,113 @@
+﻿<UserControl x:Class="TeacherScheduler.SolutionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:local="clr-namespace:TeacherScheduler"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <sys:Int32 x:Key="SolutionsAdvancingStepsNr"> 10 </sys:Int32>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0">
+            <DockPanel LastChildFill="True">
+                <DataGrid x:Name="solutionTable"
+                          ItemsSource="{Binding Path=SolutionDisplayed.Schedule}"
+                          HeadersVisibility="Column"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          SelectionMode="Single" SelectionUnit="Cell"                                                                                   
+                          CanUserSortColumns="False" CanUserResizeColumns="False" CanUserReorderColumns="False"
+                          CanUserResizeRows="False" CanUserAddRows="False">
+                    <DataGrid.Resources>
+                        <local:ItemIdxConverter x:Key="rowIdxConverter"/>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        </Style>
+                        <Style TargetType="DataGridCell">
+                            <!--<EventSetter Event="PreviewMouseDown" Handler="{Binding Path=OnSolutionTableCellMouseDown}"/>-->
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn IsReadOnly="True" Width="Auto" Header="Hour">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="BorderBrush" Value="WhiteSmoke"/>
+                                    <Setter Property="Background" Value="WhiteSmoke"/>
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center"/>
+                                    <Setter Property="Background" Value="WhiteSmoke"/>
+                                    <Setter Property="Text" Value="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={StaticResource rowIdxConverter}}">
+                                    </Setter>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Width="2*" Header="Sunday" Binding="{Binding [0].Name, NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <DataGridTextColumn Width="2*" Header="Monday" Binding="{Binding [1].Name, NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <DataGridTextColumn Width="2*" Header="Tuesday" Binding="{Binding [2].Name, NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <DataGridTextColumn Width="2*" Header="Wednesday" Binding="{Binding [3].Name, NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <DataGridTextColumn Width="2*" Header="Thursday" Binding="{Binding [4].Name, NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <DataGridTextColumn Width="2*" Header="Friday" Binding="{Binding [5].Name, NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <DataGridTextColumn Width="2*" Header="Saturday" Binding="{Binding [6].Name, NotifyOnTargetUpdated=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Border>
+        
+        <Border Grid.Row="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Padding" Value="0"/>
+                    </Style>
+
+                    <local:CompIdxToHumanIdxConverter x:Key="compIdxToHumanIdxConverter"/>
+                </StackPanel.Resources>
+
+                <Button Command="{Binding DisplayStepsBackwardSolution}" CommandParameter="{StaticResource SolutionsAdvancingStepsNr}">&lt;&lt;</Button>
+                <Button Margin="2 0 0 0" Padding ="5 0 5 0" Command="{Binding DisplayPrevSolution}">&lt;</Button>
+                <TextBlock Margin="15 0 2 0" Text="{Binding Path=SolutionDisplayedIdx, Converter={StaticResource compIdxToHumanIdxConverter}}"/>
+                <TextBlock Margin="2 0 2 0" Text="/"/>
+                <TextBlock Margin="2 0 15 0" Text="{Binding Path=Solutions.Count}"/>
+                <Button Margin="0 0 2 0" Padding ="5 0 5 0" Command="{Binding DisplayNextSolution}">&gt;</Button>
+                <Button Command="{Binding DisplayStepsForwardSolution}" CommandParameter="{StaticResource SolutionsAdvancingStepsNr}">&gt;&gt;</Button>
+            </StackPanel>
+        </Border>
+        
+        <Border Grid.Row="2">
+            <Grid>
+                <Grid.Resources>
+                    <local:BoolNotVisibilityConverter x:Key="boolNotVisibilityConverter"/>
+                    <local:BoolVisibilityConverter x:Key="boolVisibilityConverter"/>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="5*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Visibility="{Binding Path=IsSolutionInProgress, Converter={StaticResource boolNotVisibilityConverter}}" Margin="10" DockPanel.Dock="Left"
+                        Command="{Binding Path=FindSolutions}">Find Solution</Button>
+                <Button Grid.Column="0" Visibility="{Binding Path=IsSolutionInProgress, Converter={StaticResource boolVisibilityConverter}}" Margin="10" DockPanel.Dock="Left"
+                        Command="{Binding Path=StopSolutionsSearch}">Cancel</Button>
+                <Grid Grid.Column="1">
+                    <ProgressBar Margin="10" Minimum="0" Maximum="100" Value="{Binding Path=SolutionsSearchProgress}"/>
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Path=SolutionsSearchProgress, StringFormat={}{0:0}%}"/>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,88 @@
+﻿<UserControl x:Class="TeacherScheduler.StudentsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TeacherScheduler"
+             mc:Ignorable="d"
+             x:Name="studentsView">
+    <UserControl.Resources>
+        <local:BindingProxy x:Key="bindingProxy" DataSource="{Binding}"/>
+        <DataTemplate DataType="{x:Type local:Student}">
+            <DockPanel LastChildFill="True">
+                <Border DockPanel.Dock="Top">
+                    <TextBlock HorizontalAlignment="Center" Margin="5" FontSize="18" FontWeight="Bold">Parameters</TextBlock>
+                </Border>
+
+                <Border DockPanel.Dock="Top">
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.Resources>
+                            <Style TargetType="Label">
+                                <Setter Property="FontSize" Value="12"/>
+                                <Setter Property="Margin" Value="5"/>
+                            </Style>
+                            <Style TargetType="DockPanel">
+                                <Setter Property="Margin" Value="20 0 20 0"/>
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <DockPanel Grid.Column="0">
+                            <Label DockPanel.Dock="Left">Name:</Label>
+                            <TextBox x:Name="studentName" Height="25" Text="{Binding Name}"/>
+                        </DockPanel>
+                        <DockPanel Grid.Column="1">
+                            <Label DockPanel.Dock="Left">School:</Label>
+                            <ComboBox x:Name="schoolName" Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" 
+                                      ItemsSource="{Binding Source={StaticResource bindingProxy}, Path=DataSource.Schools}" SelectedItem="{Binding SchoolAttended}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Label Content="{Binding Path=Name}" FontSize="12" Margin="0" Padding="2"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </DockPanel>
+                        <DockPanel Grid.Column="2">
+                            <Label DockPanel.Dock="Left">Required Hours:</Label>
+                            <TextBox x:Name="requiredHours" Height="25" Text="{Binding RequiredHoursNr}"/>
+                        </DockPanel>
+                    </Grid>
+                </Border>
+
+                <ContentPresenter DockPanel.Dock="Bottom" Content="{Binding}" ContentTemplate="{StaticResource ScheduleTable}"/>
+            </DockPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        <DockPanel Grid.Column="0">
+            <Border x:Name="StudentsListHeader" DockPanel.Dock="Top">
+                <Label HorizontalAlignment="Center" FontSize="14" FontWeight="Bold">Students</Label>
+            </Border>
+            <UniformGrid DockPanel.Dock="Bottom" Columns="2">
+                <Button Grid.Column="0" Command="{Binding Path=AddStudentCommand}">add</Button>
+                <Button Grid.Column="1" Command="{Binding Path=RemoveSelectedStudentCommand}" CommandParameter="{Binding ElementName=StudentsList, Path=SelectedItem}">remove</Button>
+            </UniformGrid> 
+            <ListView x:Name="StudentsList"                                
+                      ItemsSource="{Binding Path=Students}"          
+                      SelectedItem="{Binding Path=SelectedStudent}"
+                      BorderThickness="{Binding ElementName=StudentsListHeader, Path=BorderThickness}" 
+                      FontSize="10"
+                      MouseDown="test">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Path=Name}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </DockPanel>
+
+        <ContentPresenter Grid.Column="1" Content="{Binding ElementName=StudentsList, Path=SelectedItem}"/>
+    </Grid>
+</UserControl>

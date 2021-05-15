@@ -1,0 +1,58 @@
+﻿<Window x:Class="TeacherScheduler.AppView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TeacherScheduler"
+        mc:Ignorable="d"
+        Title="Teacher Scheduler" Height="450" Width="800">
+    
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type local:TeacherViewModel}">
+            <local:TeacherView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type local:SchoolsViewModel}">
+            <local:SchoolsView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type local:StudentsViewModel}">
+            <local:StudentsView/>
+            <!--<ContentPresenter Content="{Binding StudentsViewBuffer}"/>-->
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type local:SolutionsViewModel}">
+            <local:SolutionsView/>
+        </DataTemplate>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Text="{Binding PageCurr.Name}"/>
+        </Border>
+        
+        <Border Grid.Row="1">
+            <ContentPresenter Content="{Binding PageCurr}"/>
+        </Border>
+        
+        <Border Grid.Row="2">
+            <ItemsControl ItemsSource="{Binding Pages}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="1"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding Name}"
+                                Command="{Binding DataContext.ChangePage, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                CommandParameter="{Binding}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+    </Grid>
+</Window>
